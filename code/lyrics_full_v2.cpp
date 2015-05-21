@@ -7,27 +7,34 @@
 
 using namespace std;
 
-void last_word_ZY( fstream &, fstream &, fstream & );
-void search_ZY( int *, char *, char **, char ***, fstream & );
+typedef struct ZY_struct {
+	int count;
+	char ZY[3];
+} ZY_Struct;
+
+void last_word_ZY( fstream &, fstream &, ZY_Struct * );
+void search_ZY( int *, char *, char **, char *** );
 void set_ZY_table( char ** );
 
 int main( int argc, char *argv[] )
 {
-	fstream tin, fin, fout;
-	fin.open ( "ZhuYin-Big5.map", ios::in ); // dictionary
-	tin.open ( argv[1], ios::in ); // lyrics file
-	fout.open( argv[2], ios::out ); // output file
+	fstream tin, fin;
+	fin.open( "ZhuYin-Big5.map", ios::in ); // dictionary
+	tin.open( argv[1], ios::in ); // lyrics file
 	
-	last_word_ZY( fin, tin, fout );
+	ZY_Struct *result = new ZY_Struct[5];
+	last_word_ZY( fin, tin, result );
+	
+	// for( int i=0; i<5; i++ )
+		// cout << result[i].ZY << " [" << result[i].count << "]" << endl;
 	
 	tin.close();
 	fin.close();
-	fout.close();
 	
 	return 0;
 }
 
-void last_word_ZY( fstream &fin, fstream &tin, fstream &fout )
+void last_word_ZY( fstream &fin, fstream &tin, ZY_Struct *result )
 {
 	char *pch;
 	char *line = new char[200];
@@ -65,7 +72,7 @@ void last_word_ZY( fstream &fin, fstream &tin, fstream &fout )
 			if( (line[i]==(char)(-95) && line[i+1]==(char)(64)) || line[i]==(char)(32) ) {
 				lastword[0] = line[i-2];
 				lastword[1] = line[i-1];
-				search_ZY( ZY_count, lastword, ZY_table, dictionary, fout );
+				search_ZY( ZY_count, lastword, ZY_table, dictionary );
 			}
 		}
 		if( int(line[strlen(line)-1]) == 13 ) {
@@ -76,8 +83,7 @@ void last_word_ZY( fstream &fin, fstream &tin, fstream &fout )
 			lastword[0] = line[strlen(line)-2];
 			lastword[1] = line[strlen(line)-1];
 		}
-		search_ZY( ZY_count, lastword, ZY_table, dictionary, fout );
-		fout << endl;
+		search_ZY( ZY_count, lastword, ZY_table, dictionary );
 	}
 	
 	multimap <int, int> map;
@@ -86,10 +92,11 @@ void last_word_ZY( fstream &fin, fstream &tin, fstream &fout )
 		map.insert( pair<int, int>( ZY_count[i], i ) );
 	
 	it = map.end();
-	fout << endl;
 	for( int i=0; i<5; i++ ) {
 		it--;
-		fout << "Most " << i+1 << " : " << ZY_table[(*it).second] << " [ " << (*it).first << " ]" << endl;
+		result[i].count = int((*it).first);
+		strncpy( result[i].ZY, ZY_table[(*it).second], 2 );
+		result[i].ZY[2] = '\0';
 	}
 	
 	for( int i=0; i<13032; i++ ) {
@@ -107,14 +114,13 @@ void last_word_ZY( fstream &fin, fstream &tin, fstream &fout )
 	delete [] line;
 }
 
-void search_ZY( int *ZY_count, char *lastword, char **ZY_table, char ***dictionary, fstream &fout )
+void search_ZY( int *ZY_count, char *lastword, char **ZY_table, char ***dictionary )
 {
 	for( int i=0; i<13032; i++ ) {
 		if( strcmp( lastword, dictionary[i][0] ) == 0 ) {
 			for( int j=0; j<37; j++ ) {
 				if( strcmp( dictionary[i][1], ZY_table[j] ) == 0 ) {
 					ZY_count[j]++;
-					fout << lastword[0] << lastword[1] << " [" << ZY_table[j] << "]    ";
 					break;
 				}
 			}
