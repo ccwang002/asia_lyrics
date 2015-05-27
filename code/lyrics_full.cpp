@@ -25,8 +25,9 @@ int main( int argc, char *argv[] )
 	ZY_Struct *result = new ZY_Struct[5];
 	last_word_ZY( fin, tin, result );
 	
-	// for( int i=0; i<5; i++ )
-		// cout << result[i].ZY << " [" << result[i].count << "]" << endl;
+	for (int i=0; i<5; i++) {
+	    cout << result[i].ZY << " [" << result[i].count << "]" << endl;
+	}
 	
 	tin.close();
 	fin.close();
