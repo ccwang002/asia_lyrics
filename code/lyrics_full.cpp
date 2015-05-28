@@ -86,6 +86,7 @@ void last_word_ZY( fstream &fin, fstream &tin, ZY_Struct *result )
 		}
 	}
 	
+	// sorting
 	multimap <int, int> map;
 	multimap <int, int>::iterator it;
 	for( int i=0; i<37; i++ )
