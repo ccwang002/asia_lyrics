@@ -26,7 +26,7 @@ int main( int argc, char *argv[] )
 	last_word_ZY( fin, tin, result );
 	
 	for (int i=0; i<5; i++)
-	    cout << result[i].ZY << " [" << result[i].count << "]" << endl;
+	    cout << result[i].ZY << " " << result[i].count << endl;
 	
 	tin.close();
 	fin.close();
