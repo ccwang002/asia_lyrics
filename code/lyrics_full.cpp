@@ -18,18 +18,25 @@ void set_ZY_table( char ** );
 
 int main( int argc, char *argv[] )
 {
-	fstream tin, fin;
-	fin.open( argv[2], ios::in ); // dictionary
+	fstream tin, fin, fou;
 	tin.open( argv[1], ios::in ); // lyrics file
+	fin.open( argv[2], ios::in ); // dictionary
+	fou.open( argv[3], ios::out | ios::app );
+	
+	int year;
+	tin >> year;
 	
 	ZY_Struct *result = new ZY_Struct[5];
 	last_word_ZY( fin, tin, result );
 	
+	fou << year << " ";
 	for (int i=0; i<5; i++)
-	    cout << result[i].ZY << " " << result[i].count << endl;
+	    fou << result[i].ZY << " " << result[i].count << " ";
+	fou << endl;
 	
 	tin.close();
 	fin.close();
+	fou.close();
 	
 	return 0;
 }
@@ -47,7 +54,6 @@ void last_word_ZY( fstream &fin, fstream &tin, ZY_Struct *result )
 		dictionary[i][1] = new char[3];
 	}
 	
-	// read character-ZY dictionary
 	for( int i=0; i<13032; i++ ) {
 		fin.getline( line, 99 );
 		pch = strtok( line, " " );
@@ -69,7 +75,6 @@ void last_word_ZY( fstream &fin, fstream &tin, ZY_Struct *result )
 		pch = strtok( line, " " );
 		while( pch != NULL ) {
 			
-			// avoid 'enter'
 			if( int(pch[strlen(pch)-1]) == 13 ) {
 				lastword[0] = pch[strlen(pch)-4];
 				lastword[1] = pch[strlen(pch)-3];
@@ -86,7 +91,6 @@ void last_word_ZY( fstream &fin, fstream &tin, ZY_Struct *result )
 		}
 	}
 	
-	// sorting
 	multimap <int, int> map;
 	multimap <int, int>::iterator it;
 	for( int i=0; i<37; i++ )
@@ -172,3 +176,91 @@ void set_ZY_table( char **ZY )
 	temp = "ㄨ"; strncpy( ZY[35], temp.c_str(), 3 );
 	temp = "ㄩ"; strncpy( ZY[36], temp.c_str(), 3 );
 }
+
+// int main( int argc, char *argv[] )
+// {
+	// FILE *fin  = fopen( argv[1], "r" );
+    // FILE *fout = fopen( argv[2], "w" );
+	
+	// int ***year = new int**[60];
+	// for( int i=0; i<60; i++ ) {
+		// year[i]  = new int*[37];
+		// for( int j=0; j<37; j++ ) {
+			// year[i][j] = new int[1];
+			// year[i][j][0] = 0;
+		// }
+	// }
+	
+	// char **ZY = new char*[37];
+	// for( int i=0; i<37; i++ )
+		// ZY[i] = new char[3];
+	
+	// set_ZY_table( ZY );
+	
+	// int year_data, times;
+	// char *ZY_data = new char[3];
+	// char *line = new char[50];
+	
+	// for( int i=0; i<185303; i++ ) {
+		// fscanf( fin, "%d", &year_data );
+		// if( year_data >= 1956 && year_data <= 2015 ) {
+			// fscanf( fin, "%s", &ZY_data[0] );
+			// fscanf( fin, "%d", &times );
+			// if( times != 0 ) {
+				// for( int j=0; j<37; j++ ) {
+					// if( strcmp( ZY_data, ZY[j] ) == 0 )
+						// year[year_data-1956][j][0] += 1;
+				// }
+			// }
+			// fscanf( fin, "%s", &ZY_data[0] );
+			// fscanf( fin, "%d", &times );
+			// if( times != 0 ) {
+				// for( int j=0; j<37; j++ ) {
+					// if( strcmp( ZY_data, ZY[j] ) == 0 )
+						// year[year_data-1956][j][0] += 1;
+				// }
+			// }
+		// }
+		// fgets( line, 49, fin );
+	// }
+	
+	// int max;
+	
+	// for( int i=0; i<60; i++ ) {
+		// max = 0;
+		// for( int j=0; j<37; j++ ) {
+			// if( year[i][j][0] > max )
+				// max = year[i][j][0];
+		// }
+		// fprintf( fout, "%d   ", i+1956 );
+		// if( max == 0 )
+			// fprintf( fout, "-- " );
+		// else {
+			// for( int j=0; j<37; j++ ) {
+				// if( year[i][j][0] == max ) {
+					// fprintf( fout, "%s %d ", ZY[j], max );
+				// }
+			// }
+		// }
+		// fprintf( fout, "\n" );
+	// }
+	
+	// for( int i=0; i<60; i++ ) {
+		// for( int j=0; j<37; j++ )
+			// delete [] year[i][j];
+		// delete [] year[i];
+	// }
+	// delete [] year;
+	
+	// for( int i=0; i<37; i++ )
+		// delete [] ZY[i];
+	// delete [] ZY;
+	
+	// delete [] ZY_data;
+	// delete [] line;
+	
+	// fclose( fin );
+	// fclose( fout );
+	
+	// return 0;
+// }
